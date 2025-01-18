@@ -3,13 +3,20 @@ import logo from "../assets/mucyo1.png";
 import { Link } from "react-scroll";
 import { FaBars, FaTimes } from "react-icons/fa";
 
-const NavBar: React.FC = () => {
+interface NavBarProps {
+  onContactClick: () => void;
+  onAboutClick: () => void;
+  onHomeClick: () => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}) => {
   const [activeLink, setActiveLink] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const handleClick = (link: string) => {
+  const handleClick = (link: string, callBack ?: ()=> void) => {
     setActiveLink(link);
-    setIsMenuOpen(false); // Close menu on small devices
+    setIsMenuOpen(false);
+    if(callBack) callBack();
   };
 
   const toggleMenu = () => {
@@ -17,9 +24,9 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <div className="fixed bg-[#09173c49] h-[50px] md:h-[80px] z-50 w-full px-10 flex items-center shadow-md">
+    <div className="fixed bg-[#09173c79] h-[50px] md:h-[80px] z-50 w-full px-10 flex items-center shadow-md">
       {/* Left Side */}
-      <div className="flex items-center w-full md:mx-28 md:space-x-14">
+      <div className="flex items-center w-full md:mx-4 md:space-x-10 lg:mx-28 lg:space-x-14">
         <div>
           <a href="/">
             <img src={logo} alt="Logo" className="w-[60px] md:w-[108px] h-[25px] md:h-[45px] block" />
@@ -27,14 +34,16 @@ const NavBar: React.FC = () => {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-16 font-raleway font-bold text-white text-[18px] pr-0 md:pr-[500px]">
+        <div className="hidden lg:flex md:flex items-center lg:gap-16 md:gap-6 font-raleway font-bold text-white lg:text-[18px] md:text-[12px] pr-0 lg:pr-[500px] md:pr-0">
           {/* Main Links */}
           <Link
             to="Home"
-            onClick={() => handleClick("Home")}
+            onClick={() => handleClick("Home",onHomeClick)
+        
+            }
             className={`${
               activeLink === "Home"
-                ? "border-b-2 border-[#fa0153] text-[#d4658a]"
+                ? "border-b-2 border-[#fa0153] "
                 : ""
             } cursor-pointer transition-all duration-150`}
           >
@@ -42,21 +51,22 @@ const NavBar: React.FC = () => {
           </Link>
           <Link
             to="Recent Mixes"
-            onClick={() => handleClick("Recent Mixes")}
+            onClick={() => handleClick("About" ,onAboutClick)
+            }
             className={`${
-              activeLink === "Recent Mixes"
-                ? "border-b-2 border-[#fa0153] text-[#d4658a]"
+              activeLink === "About"
+                ? "border-b-2 border-[#fa0153] "
                 : ""
             } cursor-pointer transition-all duration-150`}
           >
-            Recent Mixes
+            About
           </Link>
           <Link
             to="Contact"
-            onClick={() => handleClick("Contact")}
+            onClick={() => handleClick("Contact",onContactClick)}
             className={`${
               activeLink === "Contact"
-                ? "border-b-2 border-[#fa0153] text-[#d4658a]"
+                ? "border-b-2 border-[#fa0153] "
                 : ""
             } cursor-pointer transition-all duration-150`}
           >
@@ -65,13 +75,13 @@ const NavBar: React.FC = () => {
         </div>
 
         {/* Right Side Links */}
-        <div className="hidden md:flex items-start gap-6 text-white font-raleway">
+        <div className="hidden md:flex lg:flex items-start gap-6 text-white font-raleway">
           <Link
             to="Help"
             onClick={() => handleClick("Help")}
             className={`${
               activeLink === "Help"
-                ? "border-b-2 border-[#fa0153] text-[#d4658a]"
+                ? "border-b-2 border-[#fa0153]"
                 : ""
             } cursor-pointer transition-all duration-150`}
           >
@@ -129,15 +139,15 @@ const NavBar: React.FC = () => {
             Home
           </Link>
           <Link
-            to="Recent Mixes"
+            to="About"
             onClick={() => handleClick("Recent Mixes")}
             className={`${
-              activeLink === "Recent Mixes"
+              activeLink === "About"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
                 : ""
             } cursor-pointer transition-all duration-150`}
           >
-            Recent Mixes
+            About
           </Link>
           <Link
             to="Contact"
@@ -179,7 +189,7 @@ const NavBar: React.FC = () => {
             onClick={() => handleClick("Create an Account")}
             className={`${
               activeLink === "Create an Account"
-                ? "border-b-2 border-[#ffff] text-[#d4658a]"
+                ? "border-b-2 border-[#ffff] text-[#ffff]"
                 : ""
             } cursor-pointer transition-all duration-150 font-semibold text-[#fa0153]`}
           >
