@@ -28,9 +28,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
       {/* Left Side */}
       <div className="flex items-center w-full md:mx-4 md:space-x-10 lg:mx-28 lg:space-x-14">
         <div>
-          <a href="/">
             <img src={logo} alt="Logo" className="w-[60px] md:w-[108px] h-[25px] md:h-[45px] block" />
-          </a>
         </div>
 
         {/* Desktop Menu */}
@@ -129,7 +127,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           {/* Main Links */}
           <Link
             to="Home"
-            onClick={() => handleClick("Home")}
+            onClick={() => handleClick("Home",onHomeClick)}
             className={`${
               activeLink === "Home"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
@@ -140,7 +138,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           </Link>
           <Link
             to="About"
-            onClick={() => handleClick("Recent Mixes")}
+            onClick={() => handleClick("About",onAboutClick)}
             className={`${
               activeLink === "About"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
@@ -151,7 +149,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           </Link>
           <Link
             to="Contact"
-            onClick={() => handleClick("Contact")}
+            onClick={() => handleClick("Contact",onContactClick)}
             className={`${
               activeLink === "Contact"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"

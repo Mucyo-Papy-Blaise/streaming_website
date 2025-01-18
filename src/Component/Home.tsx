@@ -21,10 +21,13 @@ import mix1 from "../assets/image22.webp";
 import { useRef } from "react";
 import NavBar from "./NavBar";
 import profilePic from "../assets/76838388.png";
+import { useNavigate } from "react-router-dom";
+
 
 const Home: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>("");
+  const navigate = useNavigate()
 
+  const [activeSection, setActiveSection] = useState<string>("");
   const toggleSection = (section: string) => {
     setActiveSection((prev) => (prev === section ? "" : section));
   };
@@ -102,7 +105,7 @@ const Home: React.FC = () => {
       />
 
       <div
-        className="min-h-screen w-full lg:bg-cover md:bg-contain  bg-auto flex flex-col items-start text-center lg:pt-[200px] md:pt-[200px] pt-[150px]"
+        className="min-h-screen w-full lg:bg-cover md:bg-contain  bg-auto flex flex-col items-start text-center lg:pt-[150px] md:pt-[150px] pt-[130px]"
         style={{
           backgroundImage: getBackgroundImage(),
           backgroundSize: "cover",
@@ -150,8 +153,8 @@ const Home: React.FC = () => {
         </div>
 
         {/* New Mix */}
-        <div className="mt-16  lg:mx-40 md:mx-32 mx-8">
-          <h1 className="text-start mb-6 font-raleway font-[300px] text-[20px] text-white">
+        <div className="mt-8  lg:mx-40 md:mx-32 mx-8">
+          <h1 className="text-start mb-4 font-raleway font-[300px] text-[20px] text-white">
             NEW MIXES
           </h1>
           <div className="relative flex items-center">
@@ -209,11 +212,13 @@ const Home: React.FC = () => {
               className="absolute lg:right-[-20px] md:right-[-20px] right-[-20px] w-4 h-4 cursor-pointer text-white hover:text-[#fa0153]"
             />
           </div>
+          <div className="mt-5">
+            <button onClick={()=>navigate('/MixesPage')} className="bg-[#fa0153] text-white font-bold font-raleway p-2 w-[310px] hover:bg-[#c14e74] rounded">More Mixes</button>
+          </div>
         </div>
       </div>
 
       {/* Home Section */}
-
       <div className={`${
           activeSection === "Contact" ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300`}>
@@ -222,7 +227,7 @@ const Home: React.FC = () => {
 
       {/* Contact Panel */}
       <div
-        className={`fixed top-[80px] right-0 h-full w-[400px] bg-[#09173cc7] text-white shadow ${
+        className={`fixed top-[50px] md:top-[80px] right-0 h-full w-[420px] md:w-[400px] bg-[#09173c] md:bg-[#09173cc7] text-white shadow ${
           activeSection === "Contact" ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300`}
       >
@@ -261,7 +266,7 @@ const Home: React.FC = () => {
           </form>
           <button
             onClick={() => toggleSection("Contact")}
-            className="absolute top-4 right-4 text-white text-xl"
+            className="absolute top-4 right-4 text-white text-xl cursor-pointer"
           >
             <FaTimes className="hover:text-[#fa0153]" />
           </button>
@@ -271,7 +276,7 @@ const Home: React.FC = () => {
       {/* About */}
 
       <div
-        className={`fixed top-[80px] right-0 h-full w-[400px] bg-[#09173cc7] text-white shadow flex flex-col ${
+        className={`fixed top-[50px] md:top-[80px] right-0 h-full w-[420px] md:w-[400px] bg-[#09173c] md:bg-[#09173cc7] text-white shadow flex flex-col ${
           activeSection === "About" ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300`}
       >
@@ -282,7 +287,7 @@ const Home: React.FC = () => {
             className="object-cover"
           />
         </div>
-        <div className="max-w-[300px] ml-[30px] mt-5 ">
+        <div className="max-w-[300px] ml-[30px] mt-5 overflow-y-auto scrollbar-thumb-[#fa0153] scrollbar-track-[#161720] ">
             <h1 className="text-center font-raleway font-bold text-[20px]">Welcome to <span className="text-[#fa0153]">DEEJAY MUCYO</span> World of Mixes and Creativity! </h1>
 
             <p className="ml-[10px] font-raleway mt-5">
