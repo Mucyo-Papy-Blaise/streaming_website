@@ -23,3 +23,30 @@
     background: #161720;
     border-radius: 10px; 
   }
+
+  @keyframes bar1 {
+    0%, 100% { height: 10px; }
+    50% { height: 20px; }
+  }
+  
+  @keyframes bar2 {
+    0%, 100% { height: 15px; }
+    50% { height: 25px; }
+  }
+  
+  @keyframes bar3 {
+    0%, 100% { height: 8px; }
+    50% { height: 18px; }
+  }
+  
+  .animate-bar1 {
+    animation: bar1 0.8s infinite ease-in-out;
+  }
+  
+  .animate-bar2 {
+    animation: bar2 0.8s infinite ease-in-out;
+  }
+  
+  .animate-bar3 {
+    animation: bar3 0.8s infinite ease-in-out;
+  }
