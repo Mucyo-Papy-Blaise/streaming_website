@@ -16,60 +16,27 @@ import {
   FaArrowCircleRight,
   FaPlayCircle,
   FaTimes,
+  FaPauseCircle,
 } from "react-icons/fa";
-import mix1 from "../assets/image22.webp";
 import { useRef } from "react";
 import NavBar from "./NavBar";
 import profilePic from "../assets/76838388.png";
 import { useNavigate } from "react-router-dom";
-
+import { mixCardData } from "../Pages/MixesPage";
+import { useAudio } from "../context/AudioContext";
+import AudioPlayer from "./AudioPlayer";
 
 const Home: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { isPlaying, setIsPlaying, selectedMix, setSelectedMix, audioRef } =
+    useAudio();
 
   const [activeSection, setActiveSection] = useState<string>("");
   const toggleSection = (section: string) => {
     setActiveSection((prev) => (prev === section ? "" : section));
   };
 
-  const mixCard = [
-    {
-      id: 1,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-    {
-      id: 2,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-    {
-      id: 3,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-    {
-      id: 4,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-    {
-      id: 5,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-    {
-      id: 6,
-      name: "Street Jam",
-      image: mix1,
-      date: "January 10, 2025",
-    },
-  ];
+  const mixCard = mixCardData.slice(0, 4);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -98,10 +65,12 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <AudioPlayer />
+      <audio ref={audioRef} />
       <NavBar
         onContactClick={() => toggleSection("Contact")}
         onAboutClick={() => toggleSection("About")}
-        onHomeClick={() => toggleSection ("Home")}
+        onHomeClick={() => toggleSection("Home")}
       />
 
       <div
@@ -185,20 +154,46 @@ const Home: React.FC = () => {
                     className="object-cover w-[150px] h-[200px] opacity-[100%] hover:opacity-[60%]"
                   />
 
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <Link to="">
-                      <FaPlayCircle className=" text-white text-[40px]" />
-                    </Link>
+                  <div
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                    onClick={() => {
+                      if (!audioRef.current) return;
+
+                      if (selectedMix?.audio === card.audio) {
+                        if (isPlaying) {
+                          audioRef.current.pause();
+                          setIsPlaying(false);
+                        } else {
+                          audioRef.current.play();
+                          setIsPlaying(true);
+                        }
+                      } else {
+                        setSelectedMix(card);
+                        audioRef.current.src = card.audio;
+                        audioRef.current
+                          .play()
+                          .then(() => setIsPlaying(true))
+                          .catch((error) =>
+                            console.error("Playback failed:", error)
+                          );
+                      }
+                    }}
+                  >
+                    {selectedMix?.audio === card.audio && isPlaying ? (
+                      <FaPauseCircle className="text-white text-[40px] cursor-pointer" />
+                    ) : (
+                      <FaPlayCircle className="text-white text-[40px] cursor-pointer" />
+                    )}
                   </div>
 
-                  <div className="absolute top-6 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#09173c] w-full p-2 ">
                     <h1 className="text-white font-raleway font-bold text-[14px]">
                       {card.name}
                     </h1>
                   </div>
 
                   <div className="absolute top-[185px] left-16 transform -translate-x-1/2 -translate-y-1/2">
-                    <p className="text-[#09173c] font-raleway font-medium text-[10px]">
+                    <p className="text-[#09173c] font-raleway font-medium text-[10px] bg-white p-1 rounded-lg">
                       {card.date}
                     </p>
                   </div>
@@ -213,17 +208,22 @@ const Home: React.FC = () => {
             />
           </div>
           <div className="mt-5">
-            <button onClick={()=>navigate('/MixesPage')} className="bg-[#fa0153] text-white font-bold font-raleway p-2 w-[310px] hover:bg-[#c14e74] rounded">More Mixes</button>
+            <button
+              onClick={() => navigate("/MixesPage")}
+              className="bg-[#fa0153] text-white font-bold font-raleway p-2 w-[310px] hover:bg-[#c14e74] rounded"
+            >
+              More Mixes
+            </button>
           </div>
         </div>
       </div>
 
       {/* Home Section */}
-      <div className={`${
+      <div
+        className={`${
           activeSection === "Contact" ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300`}>
-        
-      </div>
+        } transition-transform duration-300`}
+      ></div>
 
       {/* Contact Panel */}
       <div
@@ -288,34 +288,40 @@ const Home: React.FC = () => {
           />
         </div>
         <div className="max-w-[300px] ml-[30px] mt-5 overflow-y-auto scrollbar-thumb-[#fa0153] scrollbar-track-[#161720] ">
-            <h1 className="text-center font-raleway font-bold text-[20px]">Welcome to <span className="text-[#fa0153]">DEEJAY MUCYO</span> World of Mixes and Creativity! </h1>
+          <h1 className="text-center font-raleway font-bold text-[20px]">
+            Welcome to <span className="text-[#fa0153]">DEEJAY MUCYO</span>{" "}
+            World of Mixes and Creativity!{" "}
+          </h1>
 
-            <p className="ml-[10px] font-raleway mt-5">
-            I’m Mucyo Bruce, a passionate DJ and graphic designer dedicated to creating unforgettable experiences.
-             With 4 years of DJing expertise, I specialize in crafting acid music mixes and live recording sets, 
-             all available for your listening pleasure on Audiomack.
-            </p>
+          <p className="ml-[10px] font-raleway mt-5">
+            I’m Mucyo Bruce, a passionate DJ and graphic designer dedicated to
+            creating unforgettable experiences. With 4 years of DJing expertise,
+            I specialize in crafting acid music mixes and live recording sets,
+            all available for your listening pleasure on Audiomack.
+          </p>
 
-            <p className="ml-[10px] font-raleway mt-3">
-            Whether it’s a house party, wedding, birthday, or corporate event, I’ll bring the perfect vibe to your occasion.
-            </p>
+          <p className="ml-[10px] font-raleway mt-3">
+            Whether it’s a house party, wedding, birthday, or corporate event,
+            I’ll bring the perfect vibe to your occasion.
+          </p>
 
-            <p className="ml-[10px] font-raleway mt-3">
-            Beyond the decks, I channel my creativity into graphic design with 5 years of experience, delivering stunning visuals 
-            that captivate and inspire.
-            </p>
+          <p className="ml-[10px] font-raleway mt-3">
+            Beyond the decks, I channel my creativity into graphic design with 5
+            years of experience, delivering stunning visuals that captivate and
+            inspire.
+          </p>
 
-            <p className="ml-[10px] font-raleway mt-3">
-            Let’s make magic together—on the dance floor or through dynamic designs!
-            </p>
-
-          </div>
-          <button
-            onClick={() => toggleSection("About")}
-            className="absolute top-4 right-4 text-white text-xl"
-          >
-            <FaTimes className="hover:text-[#fa0153]" />
-          </button>
+          <p className="ml-[10px] font-raleway mt-3">
+            Let’s make magic together—on the dance floor or through dynamic
+            designs!
+          </p>
+        </div>
+        <button
+          onClick={() => toggleSection("About")}
+          className="absolute top-4 right-4 text-white text-xl"
+        >
+          <FaTimes className="hover:text-[#fa0153]" />
+        </button>
       </div>
     </div>
   );
