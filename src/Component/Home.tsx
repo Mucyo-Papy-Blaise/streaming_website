@@ -7,6 +7,7 @@ import { useMediaQuery } from "react-responsive";
 import { Link } from "react-scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
+import { mixCardData } from '../Data/mixData';
 import {
   FaInstagram,
   FaTwitter,
@@ -22,20 +23,18 @@ import { useRef } from "react";
 import NavBar from "./NavBar";
 import profilePic from "../assets/76838388.png";
 import { useNavigate } from "react-router-dom";
-import { mixCardData } from "../Pages/MixesPage";
 import { useAudio } from "../context/AudioContext";
 import AudioPlayer from "./AudioPlayer";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { isPlaying, setIsPlaying, selectedMix, setSelectedMix, audioRef } =
-    useAudio();
+  const { isPlaying, setIsPlaying, selectedMix, setSelectedMix, audioRef, hasStartedPlaying, setHasStartedPlaying } = useAudio();
 
   const [activeSection, setActiveSection] = useState<string>("");
   const toggleSection = (section: string) => {
     setActiveSection((prev) => (prev === section ? "" : section));
   };
-
+  
   const mixCard = mixCardData.slice(0, 4);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -65,7 +64,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <AudioPlayer />
+      {hasStartedPlaying && <AudioPlayer />}
       <audio ref={audioRef} />
       <NavBar
         onContactClick={() => toggleSection("Contact")}
@@ -158,7 +157,7 @@ const Home: React.FC = () => {
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                     onClick={() => {
                       if (!audioRef.current) return;
-
+                    
                       if (selectedMix?.audio === card.audio) {
                         if (isPlaying) {
                           audioRef.current.pause();
@@ -166,16 +165,18 @@ const Home: React.FC = () => {
                         } else {
                           audioRef.current.play();
                           setIsPlaying(true);
+                          setHasStartedPlaying(true); // Ensure player becomes visible
                         }
                       } else {
                         setSelectedMix(card);
                         audioRef.current.src = card.audio;
                         audioRef.current
                           .play()
-                          .then(() => setIsPlaying(true))
-                          .catch((error) =>
-                            console.error("Playback failed:", error)
-                          );
+                          .then(() => {
+                            setIsPlaying(true);
+                            setHasStartedPlaying(true); // Ensure player becomes visible
+                          })
+                          .catch((error) => console.error("Playback failed:", error));
                       }
                     }}
                   >
