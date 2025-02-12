@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/mucyo1.png";
 import imageprfl from "../assets/76838388.png";
 import { useAudio } from '../context/AudioContext';
-import AudioPlayer from "../Component/AudioPlayer"
 import {
   FaHome,
   FaClock,
@@ -53,7 +52,6 @@ const MixesPage: React.FC = () => {
     audioRef,
     mixCardData,
     setHasStartedPlaying,
-    hasStartedPlaying
   } = useAudio();
 
   const [isGenreOpen, setIsGenreOpen] = useState<boolean>(false);
@@ -61,12 +59,9 @@ const MixesPage: React.FC = () => {
 
   const handleGenre = () => setIsGenreOpen(prev => !prev);
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
-
+  
   return (
     <div className="flex min-h-screen w-full bg-[#161720] relative">
-      <audio ref={audioRef} />
-      {hasStartedPlaying && <AudioPlayer />}
-
       {/* Mobile Menu Button */}
       <div className="block md:hidden fixed top-4 left-4 z-50">
         <button 
@@ -80,7 +75,7 @@ const MixesPage: React.FC = () => {
       {/* Left NavBar */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:block md:w-[250px] min-w-[250px] h-screen fixed md:sticky top-0 left-0 bg-[#161720] z-40 border-r-2 border-[#ffffff32] overflow-y-auto`}>
         <div className="p-10 pb-20">
-          <div onClick={() => navigate("/LandingPage")}>
+          <div onClick={() => navigate("/")}>
             <img
               src={logo}
               alt="logo"
@@ -123,7 +118,7 @@ const MixesPage: React.FC = () => {
           <div className="mt-6">
             <h1
               onClick={handleGenre}
-              className="font-raleway font-thin text-[20px] text-white flex flex-row justify-center items-center gap-1 cursor-pointer"
+              className="font-raleway font-thin text-[20px] text-white flex flex-row  items-center gap-1 cursor-pointer"
             >
               {isGenreOpen ? (
                 <FaChevronUp className="text[15px]" />
@@ -183,7 +178,7 @@ const MixesPage: React.FC = () => {
                 </div>
                 <button
                   className="w-[70px] md:w-[150px] md:h-[40px] h-[30px] text-white text-[15px] font-bold bg-[#fa0153] hover:bg-[#c46182] ml-4 rounded"
-                  onClick={() => navigate("/LandingPage")}
+                  onClick={() => navigate("/")}
                 >
                   Home
                 </button>
@@ -221,8 +216,8 @@ const MixesPage: React.FC = () => {
               {mixCardData.map((card) => (
                 <div
                   key={card.id}
-                  className={`relative md:flex md:flex-col flex flex-row md:-w-[230px] md:h-[330px] bg-[#323232] justify-center items-center rounded-sm shadow-sm pt-1 group transition duration-200 ease-out ${
-                    selectedMix.audio === card.audio ? "scale-105 bg-[#514545]" : ""
+                  className={`relative md:flex md:flex-col flex flex-row md:-w-[230px] md:h-[330px] bg-[#323232] justify-start md:justify-center items-center rounded-sm shadow-sm pt-1 group transition duration-200 ease-out ${
+                    selectedMix.audio === card.audio ? "md:scale-105 bg-[#514545]" : ""
                   }`}
                 >
                   <div className="bg-[#323232] w-[80px] h-[80px] md:w-[200px] md:h-[200px] overflow-hidden rounded-md mx-2 md:mx-4 cursor-pointer">
@@ -243,7 +238,7 @@ const MixesPage: React.FC = () => {
                           } else {
                             audioRef.current.play();
                             setIsPlaying(true);
-                            setHasStartedPlaying(true); // Ensure player becomes visible
+                            setHasStartedPlaying(true);
                           }
                         } else {
                           setSelectedMix(card);
@@ -252,7 +247,7 @@ const MixesPage: React.FC = () => {
                             .play()
                             .then(() => {
                               setIsPlaying(true);
-                              setHasStartedPlaying(true); // Ensure player becomes visible
+                              setHasStartedPlaying(true);
                             })
                             .catch((error) => console.error("Playback failed:", error));
                         }

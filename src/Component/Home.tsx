@@ -73,7 +73,7 @@ const Home: React.FC = () => {
       />
 
       <div
-        className="min-h-screen w-full lg:bg-cover md:bg-contain  bg-auto flex flex-col items-start text-center lg:pt-[150px] md:pt-[150px] pt-[130px]"
+        className="min-h-screen w-full lg:bg-cover md:bg-contain  bg-auto flex flex-col items-start text-center lg:pt-[120px] md:pt-[150px] pt-[130px]"
         style={{
           backgroundImage: getBackgroundImage(),
           backgroundSize: "cover",

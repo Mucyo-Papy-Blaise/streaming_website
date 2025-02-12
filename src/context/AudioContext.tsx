@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef } from 'react';
+import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 
 // Define the mix data type
 interface Mix {
@@ -19,7 +19,7 @@ interface AudioContextType {
   setCurrentMixIndex: (index: number) => void;
   selectedMix: Mix;
   setSelectedMix: (mix: Mix) => void;
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audioRef: React.MutableRefObject<HTMLAudioElement | null>;
   progress: number;
   setProgress: (progress: number) => void;
   currentTime: number;
@@ -44,7 +44,21 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedMix, setSelectedMix] = useState<Mix>(mixCardData[0]);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
   
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize audio element
+  useEffect(() => {
+    const audio = new Audio();
+    audio.addEventListener('ended', playNext);
+    audioRef.current = audio;
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('ended', playNext);
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   const playNext = () => {
     const nextIndex = (currentMixIndex + 1) % mixCardData.length;
@@ -53,9 +67,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setCurrentMixIndex(nextIndex);
     if (audioRef.current) {
       audioRef.current.src = nextMix.audio;
-      audioRef.current.play();
-      setIsPlaying(true);
-      setHasStartedPlaying(true);
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setHasStartedPlaying(true);
+        })
+        .catch(error => console.error("Playback failed:", error));
     }
   };
 
@@ -66,9 +83,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setCurrentMixIndex(prevIndex);
     if (audioRef.current) {
       audioRef.current.src = prevMix.audio;
-      audioRef.current.play();
-      setIsPlaying(true);
-      setHasStartedPlaying(true);
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setHasStartedPlaying(true);
+        })
+        .catch(error => console.error("Playback failed:", error));
     }
   };
 

@@ -9,14 +9,15 @@ function App() {
   return (
     <AudioProvider>
       <BrowserRouter>
-        <Routes>
-          {/* Landing Page Route */}
-          <Route path="/LandingPage" element={<LandingPage />} />
-          
-          {/* Mixes Page Route */}
-          <Route path="/MixesPage" element={<MixesPage />} />
-        </Routes>
-        <AudioPlayer />
+        <div className="relative min-h-screen">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/MixesPage" element={<MixesPage />} />
+          </Routes>
+          <div className="relative z-50">
+            <AudioPlayer />
+          </div>
+        </div>
       </BrowserRouter>
     </AudioProvider>
   );

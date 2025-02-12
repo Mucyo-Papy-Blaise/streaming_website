@@ -27,6 +27,7 @@ const AudioPlayer: React.FC = () => {
           setCurrentTime(audioRef.current.currentTime);
         }
       };
+
       audioRef.current.addEventListener('timeupdate', updateProgress);
       return () => {
         if (audioRef.current) {
@@ -34,12 +35,7 @@ const AudioPlayer: React.FC = () => {
         }
       };
     }
-  }, [setProgress, setCurrentTime]);
-
-  useEffect(() => {
-    // Reset hasStartedPlaying when a new mix is selected
-    setHasStartedPlaying(false);
-  }, [selectedMix, setHasStartedPlaying]);
+  }, [audioRef, setProgress, setCurrentTime]);
 
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -54,13 +50,15 @@ const AudioPlayer: React.FC = () => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-      setHasStartedPlaying(true); // Ensures player remains visible after first play
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setHasStartedPlaying(true);
+        })
+        .catch(error => console.error("Playback failed:", error));
     }
   };
 
-  // Ensure player shows up once hasStartedPlaying is set to true
   if (!hasStartedPlaying && !isPlaying) return null;
 
   return (
@@ -126,7 +124,7 @@ const AudioPlayer: React.FC = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="md:ml-20 ml-10 flex justify-center items-center gap-2">
+      <div className="md:ml-20 ml-10 flex justify-center items-center gap-5">
         <FaHeart className="text-white h-3 w-3 md:h-5 md:w-5 cursor-pointer hover:text-[#fa0153]" />
         <FaShare className="text-white h-3 w-3 md:h-5 md:w-5 cursor-pointer hover:text-[#fa0153]" />
         <FaDownload className="text-white h-3 w-3 md:h-5 md:w-5 cursor-pointer hover:text-[#fa0153]" />
