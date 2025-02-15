@@ -3,11 +3,13 @@ import image2 from "../assets/image11.webp";
 import small from "../assets/image11 small.png";
 import medium from "../assets/image11 small.png";
 import sticker1 from "../assets/boombox.png";
+import sticker2 from "../assets/sound-waves.png";
+import { Eye, EyeOff } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 import { Link } from "react-scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
-import { mixCardData } from '../Data/mixData';
+import { mixCardData } from "../Data/mixData";
 import {
   FaInstagram,
   FaTwitter,
@@ -25,16 +27,25 @@ import profilePic from "../assets/76838388.png";
 import { useNavigate } from "react-router-dom";
 import { useAudio } from "../context/AudioContext";
 import AudioPlayer from "./AudioPlayer";
+import Registration from "./Registration";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { isPlaying, setIsPlaying, selectedMix, setSelectedMix, audioRef, hasStartedPlaying, setHasStartedPlaying } = useAudio();
+  const {
+    isPlaying,
+    setIsPlaying,
+    selectedMix,
+    setSelectedMix,
+    audioRef,
+    hasStartedPlaying,
+    setHasStartedPlaying,
+  } = useAudio();
 
   const [activeSection, setActiveSection] = useState<string>("");
   const toggleSection = (section: string) => {
     setActiveSection((prev) => (prev === section ? "" : section));
   };
-  
+
   const mixCard = mixCardData.slice(0, 4);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -62,6 +73,12 @@ const Home: React.FC = () => {
     return `url(${image2})`;
   };
 
+  const [showPassword, setShowPassword] = useState<Boolean>(false);
+
+  const handleLoginLinkClick = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setActiveSection("Login");
+  };
   return (
     <div>
       {hasStartedPlaying && <AudioPlayer />}
@@ -70,6 +87,9 @@ const Home: React.FC = () => {
         onContactClick={() => toggleSection("Contact")}
         onAboutClick={() => toggleSection("About")}
         onHomeClick={() => toggleSection("Home")}
+        onHelpClick={() => toggleSection("Help")}
+        onLoginClick={() => toggleSection("Login")}
+        onCreateAccClick={() => toggleSection("Create an Account")}
       />
 
       <div
@@ -157,7 +177,7 @@ const Home: React.FC = () => {
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                     onClick={() => {
                       if (!audioRef.current) return;
-                    
+
                       if (selectedMix?.audio === card.audio) {
                         if (isPlaying) {
                           audioRef.current.pause();
@@ -165,7 +185,7 @@ const Home: React.FC = () => {
                         } else {
                           audioRef.current.play();
                           setIsPlaying(true);
-                          setHasStartedPlaying(true); // Ensure player becomes visible
+                          setHasStartedPlaying(true);
                         }
                       } else {
                         setSelectedMix(card);
@@ -174,9 +194,11 @@ const Home: React.FC = () => {
                           .play()
                           .then(() => {
                             setIsPlaying(true);
-                            setHasStartedPlaying(true); // Ensure player becomes visible
+                            setHasStartedPlaying(true);
                           })
-                          .catch((error) => console.error("Playback failed:", error));
+                          .catch((error) =>
+                            console.error("Playback failed:", error)
+                          );
                       }
                     }}
                   >
@@ -275,7 +297,6 @@ const Home: React.FC = () => {
       </div>
 
       {/* About */}
-
       <div
         className={`fixed top-[50px] md:top-[80px] right-0 h-full w-[420px] md:w-[400px] bg-[#09173c] md:bg-[#09173cc7] text-white shadow flex flex-col ${
           activeSection === "About" ? "translate-x-0" : "translate-x-full"
@@ -307,12 +328,6 @@ const Home: React.FC = () => {
           </p>
 
           <p className="ml-[10px] font-raleway mt-3">
-            Beyond the decks, I channel my creativity into graphic design with 5
-            years of experience, delivering stunning visuals that captivate and
-            inspire.
-          </p>
-
-          <p className="ml-[10px] font-raleway mt-3">
             Let’s make magic together—on the dance floor or through dynamic
             designs!
           </p>
@@ -323,6 +338,91 @@ const Home: React.FC = () => {
         >
           <FaTimes className="hover:text-[#fa0153]" />
         </button>
+      </div>
+
+      {/* Login Page */}
+      <div
+        className={`fixed top-[50px] md:top-[80px] right-0 h-full w-[420px] md:w-[400px] bg-[#09173c] md:bg-[#09173cc7] text-white shadow flex flex-col ${
+          activeSection === "Login" ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300`}
+      >
+        <div className="flex flex-col justify-center items-center">
+          <img src={sticker2} alt="Stiker1" className="w-52 h-52" />
+          <h2 className="text-[30px] text-center font-bold font-raleway">
+            Welcome Back!
+          </h2>
+
+          <form className="mt-8 flex flex-col gap-6 relative">
+            <input
+              type="text"
+              placeholder="Username or Email"
+              className="bg-transparent border-b-2 p-2 outline-none text-white font-raleway rounded w-80"
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className="bg-transparent border-b-2 p-2 outline-none text-white font-raleway rounded w-80"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-2 text-white"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
+            <button className="bg-[#fa0153] p-2 hover:bg-[#b8486e]">
+              Login
+            </button>
+          </form>
+          <button
+            onClick={() => toggleSection("Login")}
+            className="absolute top-4 right-4 text-white text-xl cursor-pointer"
+          >
+            <FaTimes className="hover:text-[#fa0153]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Registration Page  */}
+      <div
+        className={`fixed top-[50px] md:top-[80px] right-0 h-full w-[420px] md:w-[400px] bg-[#09173c] md:bg-[#09173cc7] text-white shadow flex flex-col ${
+          activeSection === "Create an Account"
+            ? "translate-x-0"
+            : "translate-x-full"
+        } transition-transform duration-300`}
+      >
+        <div className="flex flex-col justify-center items-center gap-3">
+          <h1 className="font-raleway font-bold text-[20px] text-center mt-6">
+            Create An Account
+          </h1>
+          <h2>
+            Already have an account?{" "}
+            <a
+              href="#"
+              onClick={handleLoginLinkClick}
+              className="text-[#fa0153] font-bold cursor-pointer"
+            >
+              {" "}
+              Login
+            </a>
+          </h2>
+
+          <Registration />
+          <button
+              onClick={() => toggleSection("Create a Account")}
+              className="absolute top-4 right-4 text-white text-xl cursor-pointer"
+            >
+              <FaTimes className="hover:text-[#fa0153]" />
+            </button>
+        </div>
       </div>
     </div>
   );

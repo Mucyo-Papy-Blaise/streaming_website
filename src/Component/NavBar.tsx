@@ -7,9 +7,12 @@ interface NavBarProps {
   onContactClick: () => void;
   onAboutClick: () => void;
   onHomeClick: () => void;
+  onHelpClick: () => void;
+  onLoginClick: () => void;
+  onCreateAccClick: () => void;
 }
 
-const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}) => {
+const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick,onLoginClick,onCreateAccClick,onHelpClick}) => {
   const [activeLink, setActiveLink] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
@@ -76,7 +79,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
         <div className="hidden md:flex lg:flex items-start gap-6 text-white font-raleway">
           <Link
             to="Help"
-            onClick={() => handleClick("Help")}
+            onClick={() => handleClick("Help",onHelpClick)}
             className={`${
               activeLink === "Help"
                 ? "border-b-2 border-[#fa0153]"
@@ -88,7 +91,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           <div className="h-6 w-[2px] bg-white rounded-xl"></div>
           <Link
             to="Login"
-            onClick={() => handleClick("Login")}
+            onClick={() => handleClick("Login", onLoginClick)}
             className={`${
               activeLink === "Login"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
@@ -99,7 +102,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           </Link>
           <Link
             to="Create an Account"
-            onClick={() => handleClick("Create an Account")}
+            onClick={() => handleClick("Create an Account", onCreateAccClick)}
             className={`${
               activeLink === "Create an Account"
                 ? "border-b-2 border-[#ffff] text-[#d4658a]"
@@ -162,7 +165,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           {/* Right Side Links */}
           <Link
             to="Help"
-            onClick={() => handleClick("Help")}
+            onClick={() => handleClick("Help",onHelpClick)}
             className={`${
               activeLink === "Help"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
@@ -173,7 +176,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           </Link>
           <Link
             to="Login"
-            onClick={() => handleClick("Login")}
+            onClick={() => handleClick("Login",onLoginClick)}
             className={`${
               activeLink === "Login"
                 ? "border-b-2 border-[#fa0153] text-[#d4658a]"
@@ -184,7 +187,7 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick}
           </Link>
           <Link
             to="Create an Account"
-            onClick={() => handleClick("Create an Account")}
+            onClick={() => handleClick("Create an Account", onCreateAccClick)}
             className={`${
               activeLink === "Create an Account"
                 ? "border-b-2 border-[#ffff] text-[#ffff]"

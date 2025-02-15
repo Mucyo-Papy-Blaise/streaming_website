@@ -15,12 +15,25 @@ const LandingPage: React.FC = () => {
   const handleHomeClick = () => {
   };
 
+  const handleHelpClick = () =>{
+
+  }
+  const handleLoginClick = () =>{
+
+  }
+  const handleCreateAccClick = () =>{
+
+  }
+
   return (
     <div>
       <NavBar
         onContactClick={handleContactClick}
         onAboutClick={handleAboutClick}
         onHomeClick={handleHomeClick}
+        onHelpClick={handleHelpClick}
+        onLoginClick={handleLoginClick}
+        onCreateAccClick={handleCreateAccClick}
       />
       <Home />
     </div>
