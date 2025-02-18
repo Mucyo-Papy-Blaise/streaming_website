@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/mucyo1.png";
 import imageprfl from "../assets/76838388.png";
@@ -20,8 +20,9 @@ import {
   FaBars,
   FaTimes
 } from "react-icons/fa";
+import LoadingComponent from "../Component/LoadingComponent";
+import { IMixType } from "../Component/Home";
 
-// Move this to a separate constants file if used across multiple components
 const recomend = [
   { id: 1, icon: <FaHome />, name: "Feed" },
   { id: 2, icon: <FaClock />, name: "Recents" },
@@ -50,7 +51,6 @@ const MixesPage: React.FC = () => {
     selectedMix,
     setSelectedMix,
     audioRef,
-    mixCardData,
     setHasStartedPlaying,
   } = useAudio();
 
@@ -59,6 +59,30 @@ const MixesPage: React.FC = () => {
 
   const handleGenre = () => setIsGenreOpen(prev => !prev);
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
+
+  const [mixCardData, setMixCardData] = useState<IMixType[]>();
+
+  const fetchAllMix = async () => {
+    const response = await fetch("http://localhost:5000/mix", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to authenticate");
+    }
+
+    const data = await response.json();
+    setMixCardData(data)
+  }
+
+  useEffect(() => {
+    fetchAllMix();
+  }, [])
+
+  if(!mixCardData) return <LoadingComponent />
   
   return (
     <div className="flex min-h-screen w-full bg-[#161720] relative">
@@ -215,15 +239,15 @@ const MixesPage: React.FC = () => {
             <div className="mt-10 grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-2">
               {mixCardData.map((card) => (
                 <div
-                  key={card.id}
+                  key={card._id}
                   className={`relative md:flex md:flex-col flex flex-row md:-w-[230px] md:h-[330px] bg-[#323232] justify-start md:justify-center items-center rounded-sm shadow-sm pt-1 group transition duration-200 ease-out ${
-                    selectedMix.audio === card.audio ? "md:scale-105 bg-[#514545]" : ""
+                    selectedMix.audio === card.audioUrl ? "md:scale-105 bg-[#514545]" : ""
                   }`}
                 >
                   <div className="bg-[#323232] w-[80px] h-[80px] md:w-[200px] md:h-[200px] overflow-hidden rounded-md mx-2 md:mx-4 cursor-pointer">
                     <img
-                      src={card.image}
-                      alt={card.name}
+                      src={card.imageUrl}
+                      alt={card.songTitle}
                       className="object-cover w-full h-full rounded-md hover:opacity-[60%]"
                     />
                     <div
@@ -231,7 +255,7 @@ const MixesPage: React.FC = () => {
                       onClick={() => {
                         if (!audioRef.current) return;
                       
-                        if (selectedMix?.audio === card.audio) {
+                        if (selectedMix?.audio === card.audioUrl) {
                           if (isPlaying) {
                             audioRef.current.pause();
                             setIsPlaying(false);
@@ -241,8 +265,8 @@ const MixesPage: React.FC = () => {
                             setHasStartedPlaying(true);
                           }
                         } else {
-                          setSelectedMix(card);
-                          audioRef.current.src = card.audio;
+                          setSelectedMix(card as any);
+                          audioRef.current.src = card.audioUrl;
                           audioRef.current
                             .play()
                             .then(() => {
@@ -253,7 +277,7 @@ const MixesPage: React.FC = () => {
                         }
                       }}
                     >
-                      {selectedMix.audio === card.audio && isPlaying ? (
+                      {selectedMix.audio === card.audioUrl && isPlaying ? (
                         <FaPauseCircle className="text-white text-[60px]" />
                       ) : (
                         <FaPlayCircle className="text-white text-[60px]" />
@@ -262,11 +286,11 @@ const MixesPage: React.FC = () => {
                   </div>
                 
                   <div className="mx-2 md:mx-4 mt-1 md:mt-3 md:p-0 p-2">
-                    <p className="text-white font-raleway font-bold">{card.name}</p>
+                    <p className="text-white font-raleway font-bold">{card.songTitle}</p>
                     <p className="md:mt-2 mt-1 text-[#c9c6c6] font-raleway font-bold text-[12px]">
                       {card.artist}
                     </p>
-                    <p className="mt-1 md:mt-4 text-[#8c5467]">{card.date}</p>
+                    <p className="mt-1 md:mt-4 text-[#8c5467]">{card.releasingDate}</p>
                   </div>
                 </div>
               ))}

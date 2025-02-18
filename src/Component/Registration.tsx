@@ -2,7 +2,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import google from "../assets/google.png";
 
-
 const Registration = () => {
     const [showPassword, setShowPassword] = useState<Boolean>(false);
     const [error, setError] = useState("")
@@ -32,23 +31,16 @@ const Registration = () => {
                 setError("All fields must be filled.")
                 return;
             };
-
-            const formData = new FormData()
-            formData.append("firstName", userData.firstName)
-            formData.append("lastName", userData.lastName)
-            formData.append("username", userData.username)
-            formData.append("email", userData.email)
-            formData.append("password", userData.password)
             
-            const options = {
+            const response = await fetch("http://localhost:5000/user", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(userData)
-            }
-
-            console.log("formData", formData)
-
-            const response = await fetch("http://localhost:5000/user/", options);
-            const data = response.json();
+            });
+            
+            const data = await response.json();
             console.log(data)
             setLoading(false)
         } catch (error) {

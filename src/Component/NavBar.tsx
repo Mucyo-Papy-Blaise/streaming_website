@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import logo from "../assets/mucyo1.png";
 import { Link } from "react-scroll";
 import { FaBars, FaTimes } from "react-icons/fa";
+import LogoutComponent from "./logout";
+import { useUserContext } from "./AuthContext";
+
 
 interface NavBarProps {
   onContactClick: () => void;
@@ -15,6 +18,7 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick,onLoginClick,onCreateAccClick,onHelpClick}) => {
   const [activeLink, setActiveLink] = useState<string>("");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { isAuthenticated, user } = useUserContext()
 
   const handleClick = (link: string, callBack ?: ()=> void) => {
     setActiveLink(link);
@@ -25,6 +29,8 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick,
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // const user = true;
 
   return (
     <div className="fixed bg-[#09173c79] h-[50px] md:h-[80px] z-50 w-full px-10 flex items-center shadow-md">
@@ -89,7 +95,14 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick,
             Help
           </Link>
           <div className="h-6 w-[2px] bg-white rounded-xl"></div>
-          <Link
+          {isAuthenticated ? (
+            <div className="flex items-center gap-10">
+              <LogoutComponent />
+              <p className="capitalize text-2xl font-bold underline underline-offset-8 hover:text-blue-500 cursor-pointer">{user.firstName}</p>
+            </div>
+          ):(
+            <>
+              <Link
             to="Login"
             onClick={() => handleClick("Login", onLoginClick)}
             className={`${
@@ -107,10 +120,12 @@ const NavBar: React.FC<NavBarProps> = ({onContactClick,onAboutClick,onHomeClick,
               activeLink === "Create an Account"
                 ? "border-b-2 border-[#ffff] text-[#d4658a]"
                 : ""
-            } cursor-pointer transition-all duration-150 font-semibold text-[#fa0153]`}
+            } cursor-pointer transition-all duration-150 font-semibold text-[#fa0153] text-nowrap`}
           >
             Create an Account
           </Link>
+            </>
+          )}
         </div>
 
         {/* Hamburger Menu */}

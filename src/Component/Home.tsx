@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import image2 from "../assets/image11.webp";
 import small from "../assets/image11 small.png";
 import medium from "../assets/image11 small.png";
 import sticker1 from "../assets/boombox.png";
 import sticker2 from "../assets/sound-waves.png";
-import { Eye, EyeOff } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 import { Link } from "react-scroll";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
-import { mixCardData } from "../Data/mixData";
 import {
   FaInstagram,
   FaTwitter,
@@ -28,6 +26,24 @@ import { useNavigate } from "react-router-dom";
 import { useAudio } from "../context/AudioContext";
 import AudioPlayer from "./AudioPlayer";
 import Registration from "./Registration";
+import LoginUser from "./LoginUser";
+import LoadingComponent from "./LoadingComponent";
+
+
+export interface IMixType {
+  artist: string,
+  audioUrl: string,
+  createdAt: string,
+  description: string,
+  genre: string,
+  imageUrl: string,
+  producer: string,
+  releasingDate: string,
+  songTitle: string,
+  _id: string
+  updatedAt: string,
+}
+
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -45,8 +61,6 @@ const Home: React.FC = () => {
   const toggleSection = (section: string) => {
     setActiveSection((prev) => (prev === section ? "" : section));
   };
-
-  const mixCard = mixCardData.slice(0, 4);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -73,7 +87,33 @@ const Home: React.FC = () => {
     return `url(${image2})`;
   };
 
-  const [showPassword, setShowPassword] = useState<Boolean>(false);
+  const [mix, setMix] = useState<IMixType[]>();
+
+  const fetchAllMix = async () => {
+    const response = await fetch("http://localhost:5000/mix", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to authenticate");
+    }
+
+    const data = await response.json();
+    setMix(data)
+  }
+
+  useEffect(() => {
+    fetchAllMix();
+  }, [])
+
+  if(!mix) return <LoadingComponent />
+
+  console.log("data from database", mix)
+
+  const mixCard = mix.slice(0, 4);
 
   const handleLoginLinkClick = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -159,7 +199,7 @@ const Home: React.FC = () => {
             >
               {mixCard.map((card) => (
                 <div
-                  key={card.id}
+                  key={card._id}
                   className="bg-black rounded-lg shadow-lg overflow-hidden cursor-pointer group"
                   style={{
                     minWidth: "150px",
@@ -168,8 +208,8 @@ const Home: React.FC = () => {
                   }}
                 >
                   <img
-                    src={card.image}
-                    alt={card.name}
+                    src={card.imageUrl}
+                    alt={card.songTitle}
                     className="object-cover w-[150px] h-[200px] opacity-[100%] hover:opacity-[60%]"
                   />
 
@@ -178,7 +218,7 @@ const Home: React.FC = () => {
                     onClick={() => {
                       if (!audioRef.current) return;
 
-                      if (selectedMix?.audio === card.audio) {
+                      if (selectedMix?.audio === card.audioUrl) {
                         if (isPlaying) {
                           audioRef.current.pause();
                           setIsPlaying(false);
@@ -188,8 +228,8 @@ const Home: React.FC = () => {
                           setHasStartedPlaying(true);
                         }
                       } else {
-                        setSelectedMix(card);
-                        audioRef.current.src = card.audio;
+                        setSelectedMix(card as any);
+                        audioRef.current.src = card.audioUrl;
                         audioRef.current
                           .play()
                           .then(() => {
@@ -202,7 +242,7 @@ const Home: React.FC = () => {
                       }
                     }}
                   >
-                    {selectedMix?.audio === card.audio && isPlaying ? (
+                    {selectedMix?.audio === card.audioUrl && isPlaying ? (
                       <FaPauseCircle className="text-white text-[40px] cursor-pointer" />
                     ) : (
                       <FaPlayCircle className="text-white text-[40px] cursor-pointer" />
@@ -211,13 +251,13 @@ const Home: React.FC = () => {
 
                   <div className="absolute top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#09173c] w-full p-2 ">
                     <h1 className="text-white font-raleway font-bold text-[14px]">
-                      {card.name}
+                      {card.songTitle}
                     </h1>
                   </div>
 
                   <div className="absolute top-[185px] left-16 transform -translate-x-1/2 -translate-y-1/2">
                     <p className="text-[#09173c] font-raleway font-medium text-[10px] bg-white p-1 rounded-lg">
-                      {card.date}
+                      {card.releasingDate}
                     </p>
                   </div>
                 </div>
@@ -352,36 +392,7 @@ const Home: React.FC = () => {
             Welcome Back!
           </h2>
 
-          <form className="mt-8 flex flex-col gap-6 relative">
-            <input
-              type="text"
-              placeholder="Username or Email"
-              className="bg-transparent border-b-2 p-2 outline-none text-white font-raleway rounded w-80"
-            />
-
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="bg-transparent border-b-2 p-2 outline-none text-white font-raleway rounded w-80"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-2 text-white"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-
-            <button className="bg-[#fa0153] p-2 hover:bg-[#b8486e]">
-              Login
-            </button>
-          </form>
+          <LoginUser />
           <button
             onClick={() => toggleSection("Login")}
             className="absolute top-4 right-4 text-white text-xl cursor-pointer"

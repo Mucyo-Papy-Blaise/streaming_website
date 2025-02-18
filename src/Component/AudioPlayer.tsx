@@ -2,6 +2,20 @@ import React, { useEffect } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { FaStepBackward, FaStepForward, FaPlay, FaPause, FaHeart, FaShare, FaDownload } from 'react-icons/fa';
 
+// interface IMixType {
+//   artist: string,
+//   audioUrl: string,
+//   createdAt: string,
+//   description: string,
+//   genre: string,
+//   imageUrl: string,
+//   producer: string,
+//   releasingDate: string,
+//   songTitle: string,
+//   _id: string
+//   updatedAt: string,
+// }
+
 const AudioPlayer: React.FC = () => {
   const {
     isPlaying,
